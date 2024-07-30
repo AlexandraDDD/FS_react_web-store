@@ -92,6 +92,47 @@ class DeviceController {
         })
         return res.json(device)
     }
+    async update(req, res, next) {
+        try {
+            const { id } = req.params;
+            let { name, price, brandId, typeId, info } = req.body;
+            const { img } = req.files;
+
+            const device = await Device.findOne({ where: { id } });
+            if (!device) {
+                return res.status(404).json({ message: 'Device not found' });
+            }
+
+            if (img) {
+                let fileName = uuid.v4() + ".jpg";
+                img.mv(path.resolve(__dirname, "..", 'static', fileName));
+                device.img = fileName;
+            }
+
+            device.name = name;
+            device.price = price;
+            device.brandId = brandId;
+            device.typeId = typeId;
+            await device.save();
+
+            if (info) {
+                info = JSON.parse(info);
+                await DeviceInfo.destroy({ where: { deviceId: device.id } });
+                info.forEach(element =>
+                    DeviceInfo.create({
+                        title: element.title,
+                        description: element.description,
+                        deviceId: device.id
+                    })
+                );
+            }
+
+            return res.json(device);
+        } catch (err) {
+            console.log("error update device");
+            next(ApiError.badRequest(err.message));
+        }
+    }
 
 }
 module.exports = new DeviceController()
