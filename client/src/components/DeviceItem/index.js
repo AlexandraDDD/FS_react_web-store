@@ -1,1 +1,1 @@
-export { default as DeviceItem }  from './DeviceItem'
+export { default as DeviceItem } from "./DeviceItem";

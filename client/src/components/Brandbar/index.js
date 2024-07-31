@@ -1,3 +1,1 @@
-export { default as Brandbar } from './Brandbar'
-
-
+export { default as Brandbar } from "./Brandbar";

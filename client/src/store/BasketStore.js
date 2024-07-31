@@ -1,5 +1,4 @@
-
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from "mobx";
 
 export default class BasketStore {
   constructor() {
@@ -10,23 +9,22 @@ export default class BasketStore {
     makeAutoObservable(this);
   }
 
-  setTotalPrice(totalPrice){
-    this._totalPrice =   totalPrice 
-
+  setTotalPrice(totalPrice) {
+    this._totalPrice = totalPrice;
   }
   setDevices(Bsdevices) {
-    this._Bsdevices =  Bsdevices
+    this._Bsdevices = Bsdevices;
   }
 
   addDevice(deviceId) {
     const device = this._Bsdevices.find((d) => d.deviceId === deviceId);
-  
+
     if (device) {
       device.count++;
     } else {
       this._Bsdevices.push({ deviceId, count: 1 });
     }
-  
+
     this._totalPrice += this.getDeviceById(deviceId).price;
   }
 

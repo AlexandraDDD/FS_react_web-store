@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
-import { Context } from '..';
+import React, { useContext } from "react";
+import { Link, Navigate, useLocation } from "react-router-dom";
+import { Context } from "..";
 
 const AuthGuard = ({ children }) => {
-  const {user} = useContext(Context)
- 
+  const { user } = useContext(Context);
+
   const isAuth = user.isAuth;
   // замените на вашу логику проверки авторизации
 

@@ -1,5 +1,5 @@
-body{
-  color: #282c34 !important
+body {
+  color: #282c34 !important;
 }
 .App {
   text-align: center;
@@ -39,10 +39,10 @@ body{
     transform: rotate(360deg);
   }
 }
-a{
+a {
   text-decoration: none;
   color: #282c34;
 }
-p{
+p {
   margin: 0;
 }

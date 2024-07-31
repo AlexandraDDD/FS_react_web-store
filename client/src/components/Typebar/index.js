@@ -1,1 +1,1 @@
-export { default as TypeBar }  from './TypeBar'
+export { default as TypeBar } from "./TypeBar";
