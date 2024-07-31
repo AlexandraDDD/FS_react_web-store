@@ -85,7 +85,7 @@ function DeviceItem({ device, onRemove, addToBasket }) {
                                     variant="outline-warning"
                                     onClick={(event) => {
                                         event.stopPropagation();
-                                        edit.setDeviceToEdit(device);
+                                        edit.setSelectDevice(device);
                                         modals.setDeviceModalVisible(true);
                                       
                                     } }>

@@ -96,18 +96,23 @@ class DeviceController {
         try {
             const { id } = req.params;
             let { name, price, brandId, typeId, info } = req.body;
-            const { img } = req.files;
+            if (req.files && req.files.img) {
+                const { img } = req.files;
+                if (img) {
+                    let fileName = uuid.v4() + ".jpg";
+                    img.mv(path.resolve(__dirname, "..", 'static', fileName));
+                    device.img = fileName;
+                }
+            }
+
+
 
             const device = await Device.findOne({ where: { id } });
             if (!device) {
                 return res.status(404).json({ message: 'Device not found' });
             }
 
-            if (img) {
-                let fileName = uuid.v4() + ".jpg";
-                img.mv(path.resolve(__dirname, "..", 'static', fileName));
-                device.img = fileName;
-            }
+
 
             device.name = name;
             device.price = price;

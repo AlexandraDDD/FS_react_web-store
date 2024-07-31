@@ -4,14 +4,14 @@ export default class EditStore {
 
 
     constructor() {
-        this._deviceToEdit = null;
+        this._selectDevice = null;
         makeAutoObservable(this);
     }
 
-    setDeviceToEdit(device) {
-        this._deviceToEdit = device;
+    setSelectDevice(device) {
+        this._selectDevice = device;
     }
-    get deviceToEdit() {
-        return this._deviceToEdit
+    get selectDevice() {
+        return this._selectDevice
     }
 }

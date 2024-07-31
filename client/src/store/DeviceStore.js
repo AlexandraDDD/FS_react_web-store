@@ -1,11 +1,11 @@
-import {makeAutoObservable} from "mobx";
+import { makeAutoObservable } from "mobx";
 
-export default class DeviceStore{
-    constructor(){
-        this._types = []                               
-        this._brands = []                            
-        this._devices = []                              
-                                          
+export default class DeviceStore {
+    constructor() {
+        this._types = []
+        this._brands = []
+        this._devices = []
+
         this._user = {}
 
         this._selectedType = {}
@@ -15,64 +15,69 @@ export default class DeviceStore{
         this._totalCount = 0
         this._limit = 3
 
-      
+
         makeAutoObservable(this)
     }
-    setPage(page){
+    setPage(page) {
         console.log(page);
         this._page = page
     }
-    setTotalCount(totalCount){
+    setTotalCount(totalCount) {
         this._totalCount = totalCount
     }
-    setLimit(limit){
+    setLimit(limit) {
         this._limit = limit
     }
-    setTypes(types){
+    setTypes(types) {
         this._types = types
     }
-    setBrands(brands){
+    setBrands(brands) {
         this._brands = brands
     }
-    setDevices(devices){
+    setDevices(devices) {
         this._devices = devices
     }
-    setSelectedType(type){
+    setSelectedType(type) {
         this._page = 1
         this._selectedType = type
     }
-    setSelectedBrand(brand){
+    setSelectedBrand(brand) {
         this._page = 1
         this._selectedBrand = brand
     }
-    setInfo(brand){
+    setInfo(brand) {
         this._page = 1
         this._selectedBrand = brand
     }
-   
-    get selectedBrand(){
-        return  this._selectedBrand
+    updateDevice(updatedDevice) {
+        const index = this._devices.findIndex(device => device.id === updatedDevice.id);
+        if (index !== -1) {
+            this._devices[index] = updatedDevice;
+        }
     }
-    get selectedType(){
-        return  this._selectedType
+    get selectedBrand() {
+        return this._selectedBrand
     }
-    get types(){
-        return  this._types
+    get selectedType() {
+        return this._selectedType
     }
-    get brands(){
+    get types() {
+        return this._types
+    }
+    get brands() {
         return this._brands
     }
-    get devices(){
+    get devices() {
         return this._devices
     }
-    get page(){
+    get page() {
         return this._page
     }
-    get totalCount(){
+    get totalCount() {
         return this._totalCount
     }
-    get limit(){
+    get limit() {
         return this._limit
     }
-  
+
 }
