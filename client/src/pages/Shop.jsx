@@ -28,8 +28,9 @@ const Shop = observer(() => {
     let typeId = device.selectedType.id || null;
     let brandId = device.selectedBrand.id || null;
     fetchDevices(
-      device.selectedType.id,
       device.selectedBrand.id,
+      device.selectedType.id,
+
       device.limit,
       device.page,
     ).then((data) => {

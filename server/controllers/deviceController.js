@@ -55,7 +55,7 @@ class DeviceController {
     }
     async getAll(req, res) {
         let { brandId, typeId, limit, page } = req.query
-        console.log(brandId, typeId, limit, page);
+       
         brandId = Number(brandId)
         typeId = Number(typeId)
         // Проверяем, что brandId и typeId являются числами
@@ -65,6 +65,7 @@ class DeviceController {
         if (typeId && isNaN(typeId)) {
             return res.status(400).json({ message: 'Invalid typeId' });
         }
+        console.log(brandId, typeId, limit, page);
         page = page || 1
         limit = limit || 4
         let offset = page * limit - limit

@@ -7,6 +7,7 @@ import {
   Image,
   Modal,
   Row,
+  Spinner,
 } from "react-bootstrap";
 import { Context } from "../..";
 import {
@@ -65,13 +66,13 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     }
   }, [purpose, deviceToEdit, setValue]);
 
-  // Отслеживание изменений в полях формы и вывод их значений в консоль
+  /*  // Отслеживание изменений в полях формы и вывод их значений в консоль
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
       console.log("Form field changed:", { name, type, value });
     });
     return () => subscription.unsubscribe();
-  }, [watch]);
+  }, [watch]);  */
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -80,8 +81,8 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     if (data.img) {
       formData.append("img", data.img);
     }
-    formData.append("brandId", data.brandId);
-    formData.append("typeId", data.typeId);
+    formData.append("brandId", data.brandId );
+    formData.append("typeId", data.typeId );
     formData.append("info", JSON.stringify(data.info));
 
     if (purpose === "create") {
@@ -118,142 +119,151 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     );
   };
 
+
   const DeviceType = useMemo(() => {
-    if (!initialValuesSet) return "Загрузка...";
     const typeId = watch("typeId");
-    console.log("typeId - " + typeId);
-    console.log("device.types - " + JSON.stringify(device.types));
-    return device.types.find((type) => type.id === typeId)?.name || "не найден";
-  }, [initialValuesSet, watch, device.types]);
+    return device.types.find((type) => type.id === typeId)?.name || "выберите тип";
+  }, [ watch("typeId"), setValue]);
 
   const DeviceBrand = useMemo(() => {
-    if (!initialValuesSet) return "Загрузка...";
     const brandId = watch("brandId");
     return (
-      device.brands.find((brand) => brand.id === brandId)?.name || "не найден"
+      device.brands.find((brand) => brand.id === brandId)?.name || "выберите бренд"
     );
-  }, [initialValuesSet, watch, device.brands]);
+  }, [watch("brandId"), setValue]);
 
+  
   return (
     <>
       <Modal show={show} onHide={onHide} animation={false} size="lg" centered>
-        <Modal.Header closeButton>
-          {purpose === "create" ? (
-            <Modal.Title>Добавить устройство</Modal.Title>
-          ) : (
-            <Modal.Title>Изменить товар</Modal.Title>
-          )}
-        </Modal.Header>
-        <Modal.Body>
-          <Form
-            className="d-flex flex-column aling-items-center justify-content-center"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <Dropdown className="mb-2">
-              <Dropdown.Toggle>{DeviceType}</Dropdown.Toggle>
-              <Dropdown.Menu>
-                {device.types.map((type) => (
-                  <Dropdown.Item
-                    onClick={() => setValue("typeId", type.id)}
-                    key={type.id}
-                  >
-                    {type.name}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <Dropdown>
-              <Dropdown.Toggle>{DeviceBrand}</Dropdown.Toggle>
-              <Dropdown.Menu>
-                {device.brands.map((brand) => (
-                  <Dropdown.Item
-                    onClick={() => setValue("brandId", brand.id)}
-                    key={brand.id}
-                  >
-                    {brand.name}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            <Form.Control
-              className="mt-3"
-              placeholder="Введите название устройства"
-              {...register("name")}
-            />
-            <Form.Control
-              className="mt-3"
-              placeholder="Введите стоимость устройства"
-              type="number"
-              {...register("price")}
-            />
-            {!file ? (
-              <>
-                <h5 className="mt-2"> старое фото</h5>
-                <Image
-                  style={{ width: 200, height: 200 }}
-                  src={process.env.REACT_APP_API_URL + watch("img")}
+        {(purpose === 'edit' && !initialValuesSet) ?
+          <>
+            <Spinner />
+          </> :
+          <>
+            <Modal.Header closeButton>
+              {purpose === "create" ? (
+                <Modal.Title>Добавить устройство</Modal.Title>
+              ) : (
+                <Modal.Title>Изменить товар</Modal.Title>
+              )}
+            </Modal.Header>
+            <Modal.Body>
+              <Form
+                className="d-flex flex-column aling-items-center justify-content-center"
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <Dropdown className="mb-2">
+                  <Dropdown.Toggle>{DeviceType}</Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {device.types.map((type) => (
+                      <Dropdown.Item
+                        onClick={() => setValue("typeId", type.id)}
+                        key={type.id}
+                      >
+                        {type.name}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+                <Dropdown>
+                  <Dropdown.Toggle>{DeviceBrand}</Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {device.brands.map((brand) => (
+                      <Dropdown.Item
+                        onClick={() => setValue("brandId", brand.id)}
+                        key={brand.id}
+                      >
+                        {brand.name}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+                <Form.Control
+                  className="mt-3"
+                  placeholder="Введите название устройства"
+                  {...register("name")}
                 />
-              </>
-            ) : (
-              <>
-                <h5 className="mt-2">новое фото</h5>
-                <Image style={{ width: 200, height: 200 }} src={file} />
-              </>
-            )}
-            <Form.Control
-              className="mt-3"
-              placeholder="Загрузите изображение устройства"
-              type="file"
-              onChange={selectFile}
-            />
-            <hr />
-            <Button variant={"outline-dark"} onClick={addInfo} className="mb-2">
-              Добавить характеристики
-            </Button>
-            {watch("info") && watch("info").length > 0 ? (
-              watch("info").map((i) => (
-                <Row key={i.number} className="mb-2">
-                  <Col md={4}>
-                    <Form.Control
-                      value={i.title}
-                      onChange={(e) =>
-                        changeInfo("title", e.target.value, i.number)
-                      }
-                      placeholder="Название"
+                <Form.Control
+                  className="mt-3"
+                  placeholder="Введите стоимость устройства"
+                  type="number"
+                  {...register("price")}
+                />
+                {(!file && purpose === 'edit') ? (
+                  <>
+                  
+                    <h5 className="mt-2"> старое фото</h5>
+                    <Image
+                      style={{ width: 200, height: 200 }}
+                      src={process.env.REACT_APP_API_URL + watch("img")}
                     />
-                  </Col>
-                  <Col md={4}>
-                    <Form.Control
-                      value={i.description}
-                      onChange={(e) =>
-                        changeInfo("description", e.target.value, i.number)
-                      }
-                      placeholder="Описание"
-                    />
-                  </Col>
-                  <Col md={4}>
-                    <Button
-                      variant="outline-danger"
-                      onClick={() => removeInfo(i.number)}
-                    >
-                      Удалить
-                    </Button>
-                  </Col>
-                </Row>
-              ))
-            ) : (
-              <p>Нет характеристик</p>
-            )}
-            <Modal.Footer>
-              <Button variant="secondary" onClick={onHide}>
-                Закрыть
-              </Button>
-              <Button variant="primary" type="submit">
-                {purpose === "create" ? "Добавить" : "Сохранить"}
-              </Button>
-            </Modal.Footer>
-          </Form>
-        </Modal.Body>
+                  </>
+                ) : (
+                  <>
+                    <h5 className="mt-2">
+                      {purpose === 'create' ? 'фото' :   'новое фото'}
+                      </h5>
+                    <Image style={{ width: 200, height: 200 }} src={file} />
+                  </>
+                )}
+                <Form.Control
+                  className="mt-3"
+                  placeholder="Загрузите изображение устройства"
+                  type="file"
+                  onChange={selectFile}
+                />
+                <hr />
+                <Button variant={"outline-dark"} onClick={addInfo} className="mb-2">
+                  Добавить характеристики
+                </Button>
+                {watch("info") && watch("info").length > 0 ? (
+                  watch("info").map((i) => (
+                    <Row key={i.number} className="mb-2">
+                      <Col md={4}>
+                        <Form.Control
+                          value={i.title}
+                          onChange={(e) =>
+                            changeInfo("title", e.target.value, i.number)
+                          }
+                          placeholder="Название"
+                        />
+                      </Col>
+                      <Col md={4}>
+                        <Form.Control
+                          value={i.description}
+                          onChange={(e) =>
+                            changeInfo("description", e.target.value, i.number)
+                          }
+                          placeholder="Описание"
+                        />
+                      </Col>
+                      <Col md={4}>
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => removeInfo(i.number)}
+                        >
+                          Удалить
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))
+                ) : (
+                  <p>Нет характеристик</p>
+                )}
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={onHide}>
+                    Закрыть
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    {purpose === "create" ? "Добавить" : "Сохранить"}
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal.Body>
+          </>
+        }
+
       </Modal>
     </>
   );
