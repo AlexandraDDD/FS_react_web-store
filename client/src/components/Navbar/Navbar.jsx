@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import { Context } from "../..";
 import styles from "./Navbar.module.css";
+import { FaShoppingCart } from "react-icons/fa";
 
 const NavBar = observer(() => {
   const { user } = useContext(Context);
@@ -44,7 +45,7 @@ const NavBar = observer(() => {
               onClick={() => navigate(BASKET_ROUTE)}
               className={styles.btn}
             >
-              корзина
+              корзина    <FaShoppingCart />
             </Button>
             <Button
               variant={"outline-light"}

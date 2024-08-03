@@ -5,6 +5,14 @@ import { ListGroup, ListGroupItem } from "react-bootstrap";
 
 const TypeBar = observer(() => {
   const { types, device } = useContext(Context);
+
+  const handleType= (type) => {
+    if (device.selectedType.id === type.id) {
+      device.setSelectedType({});
+    } else {
+      device.setSelectedType(type);
+    }
+  };
   return (
     <ListGroup>
       {types.types.map((type) => (
@@ -12,7 +20,7 @@ const TypeBar = observer(() => {
           style={{ cursor: "pointer" }}
           active={type.id === device.selectedType.id}
           key={type.id}
-          onClick={() => device.setSelectedType(type)}
+          onClick={() => handleType(type)}
         >
           {type.name}
         </ListGroupItem>

@@ -34,7 +34,7 @@ const Shop = observer(() => {
           <Filterbar className="mt-5" />
         </Col>
         <Col md={9}>
-          <Brandbar className="mt-5 mb-5" />
+          <Brandbar className="mt-5 " />
           <DeviceList className="" />
           <Pages />
         </Col>
