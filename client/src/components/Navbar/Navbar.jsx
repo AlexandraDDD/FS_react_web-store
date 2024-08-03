@@ -17,7 +17,8 @@ import styles from "./Navbar.module.css";
 import { FaShoppingCart } from "react-icons/fa";
 
 const NavBar = observer(() => {
-  const { user } = useContext(Context);
+  const { user, basket } = useContext(Context);
+  
   const navigate = useNavigate();
 
   const logOut = () => {
@@ -25,6 +26,9 @@ const NavBar = observer(() => {
     user.setIsAuth(false);
     navigate(LOGIN_ROUTE);
   };
+  
+  console.log(basket.BScount);
+  
 
   return (
     <Navbar bg="dark" variant="dark">
@@ -46,6 +50,22 @@ const NavBar = observer(() => {
               className={styles.btn}
             >
               корзина    <FaShoppingCart />
+              {basket.BScount > 0 && (
+                <span
+                  style={{
+                    backgroundColor: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "0 5px",
+                    marginLeft: "5px",
+                    fontSize: "12px",
+                    position: "relative",
+                    top: "-5px",
+                  }}
+                >
+                  {basket.BScount}
+                </span>
+              )}
             </Button>
             <Button
               variant={"outline-light"}

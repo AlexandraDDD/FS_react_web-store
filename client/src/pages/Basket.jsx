@@ -36,7 +36,7 @@ function Basket() {
     if (!loading) {
       fetchBasket().then((data) => {
         basket.setDevices(data);
-        console.log(basket);
+       
         let total = 0;
         data.forEach((basketDevice) => {
           const d = device.devices.find(
@@ -45,7 +45,7 @@ function Basket() {
           total += d.price * basketDevice.count;
         });
         setTotalPrice(total);
-        console.log(totalPrice);
+      
       });
     }
   }, [loading]);
@@ -108,8 +108,8 @@ function Basket() {
                               <MDBBtn color="link" className="px-2">
                                 <MDBIcon fas icon="minus" />
                               </MDBBtn>
-
-                              <MDBInput type="number" min="0" defaultValue={1} size="sm" />
+                              <p>{device.count}</p>
+                              <MDBInput type="number" min="0" defaultValue={device.count} size="sm" />
 
                               <MDBBtn color="link" className="px-2">
                                 <MDBIcon fas icon="plus" />

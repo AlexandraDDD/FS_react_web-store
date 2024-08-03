@@ -9,6 +9,8 @@ export default class DeviceStore {
     this._page = 1;
     this._totalCount = 0;
     this._limit = 3;
+    this._searchQuery = "";
+
     makeAutoObservable(this);
   }
 
@@ -17,7 +19,13 @@ export default class DeviceStore {
     this._devices = response.rows;
     this._totalCount = response.count;
   });
+  setSearchQuery(query) {
+    this._searchQuery = query;
+  }
 
+  get searchQuery() {
+    return this._searchQuery;
+  }
   setSelectedType(type) {
     this._page = 1;
     this._selectedType = type;

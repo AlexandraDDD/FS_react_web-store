@@ -13,7 +13,7 @@ const Brandbar = observer(() => {
     }
   };
   return (
-    <Row className={"d-flex"}>
+    <Row className="d-flex">
     {brands.brands.map((brand) => (
       <Card
         style={{

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
-import DeviceList from "../components/DeviceList.jsx/DeviceList";
+import DeviceList from "../components/DeviceList/DeviceList";
 import { observer } from "mobx-react-lite";
 import { Context } from "..";
 import { Pages } from "../components/Pages";
@@ -9,6 +9,10 @@ import { Brandbar } from "../components/Brandbar";
 import { TypeBar } from "../components/Typebar";
 import CreateDevice from "../components/modals/CreateDevice";
 import { action } from "mobx";
+import SearchBar from "../components/SearchBar/SearchBar";
+
+
+
 
 const Shop = observer(() => {
   const { device, modals, types, brands } = useContext(Context);
@@ -31,11 +35,12 @@ const Shop = observer(() => {
       <Row className="mt-5">
         <Col md={3}>
           <TypeBar />
-          <Filterbar className="mt-5" />
+          <Filterbar/>
         </Col>
         <Col md={9}>
-          <Brandbar className="mt-5 " />
-          <DeviceList className="" />
+          <Brandbar/>
+          <SearchBar/>
+          <DeviceList />
           <Pages />
         </Col>
       </Row>
