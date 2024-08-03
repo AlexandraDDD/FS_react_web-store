@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { Row } from "react-bootstrap";
 import DeviceItem from "../DeviceItem/DeviceItem";
 import { Context } from "../..";
-import { addDevice } from "../../http/BasketAPI";
+import { addDevice } from "../../API/BasketAPI";
 
 const DeviceList = observer(() => {
   const { device } = useContext(Context);

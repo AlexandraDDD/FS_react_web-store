@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Table, Button, Spinner } from "react-bootstrap";
 import { Context } from "..";
-import { fetchBasket, removeDevice } from "../http/BasketAPI";
-import { fetchDevices } from "../http/deviceAPI";
+import { fetchBasket, removeDevice } from "../API/BasketAPI";
+import { fetchDevices } from "../API/deviceAPI";
+import { action } from "mobx";
 
 function Basket() {
   const { device, basket } = useContext(Context);
@@ -10,11 +11,10 @@ function Basket() {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    fetchDevices().then((data) => {
-      device.setDevices(data.rows.slice());
-      console.log(device);
-      setLoading(false);
-    });
+    action(() => {
+      device.fetchDevices();
+    })();
+    setLoading(false);
   }, []);
 
   useEffect(() => {

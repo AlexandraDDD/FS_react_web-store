@@ -1,15 +1,15 @@
 import { $authhost } from ".";
 
-export const createType = async (type) => {
+export const createTypeReq = async (type) => {
   const { data } = await $authhost.post("api/type/", type);
   return data;
 };
-export const fetchTypes = async () => {
+export const fetchTypesReq = async () => {
   const { data } = await $authhost.get("api/type/");
   return data;
 };
 
-export const removeType = async (id) => {
+export const removeTypeReq = async (id) => {
   const { data } = await $authhost.delete("api/type/" + id);
   return data;
 };

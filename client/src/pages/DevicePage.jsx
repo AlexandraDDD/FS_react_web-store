@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Image, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { fetchOneDevice } from "../http/deviceAPI";
+import { fetchOneDevice } from "../API/deviceAPI";
 function DevicePage() {
   const [device, setDevice] = useState({});
   const { id } = useParams();

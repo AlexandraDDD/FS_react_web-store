@@ -7,36 +7,23 @@ import { Pages } from "../components/Pages";
 import { Filterbar } from "../components/FilterBar";
 import { Brandbar } from "../components/Brandbar";
 import { TypeBar } from "../components/Typebar";
-import { fetchTypes } from "../http/TypesAPI";
-import { fetchBrands } from "../http/BrandAPI";
-import { fetchDevices } from "../http/deviceAPI";
 import CreateDevice from "../components/modals/CreateDevice";
+import { action } from "mobx";
 
 const Shop = observer(() => {
-  const { device, modals } = useContext(Context);
-  useEffect(() => {
-    fetchTypes().then((data) => device.setTypes(data));
-    fetchBrands().then((data) => device.setBrands(data));
-    /*  fetchDevices(null, null, 3, 1).then(data => {
-      device.setDevices(data.rows.slice())
-
-      device.setTotalCount(data.count)
-    }) */
-  }, [device]);
+  const { device, modals, types, brands } = useContext(Context);
 
   useEffect(() => {
-    let typeId = device.selectedType.id || null;
-    let brandId = device.selectedBrand.id || null;
-    fetchDevices(
-      device.selectedBrand.id,
-      device.selectedType.id,
+    if (types.types.length === 0)
+      types.fetchTypes();
+    if (brands.brands.length === 0)
+      brands.fetchBrands();
+  }, []);
 
-      device.limit,
-      device.page,
-    ).then((data) => {
-      device.setDevices(data.rows.slice());
-      device.setTotalCount(data.count);
-    });
+  useEffect(() => {
+    action(() => {
+      device.fetchDevices();
+    })();
   }, [device.page, device.selectedType, device.selectedBrand, device.limit]);
 
   return (

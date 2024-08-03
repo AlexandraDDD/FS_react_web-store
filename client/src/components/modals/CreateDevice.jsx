@@ -14,13 +14,13 @@ import {
   createDevice,
   fetchOneDevice,
   updateDevice,
-} from "../../http/deviceAPI";
+} from "../../API/deviceAPI";
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { useMemo } from "react";
 
 const CreateDevice = observer(({ show, onHide, purpose }) => {
-  const { device, edit } = useContext(Context);
+  const { device, edit, types, brands } = useContext(Context);
   const [deviceToEdit, setDeviceToEdit] = useState(null);
   const { register, handleSubmit, setValue, watch, reset } = useForm({
     defaultValues: {
@@ -28,8 +28,8 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     },
   });
 
+  
   const [initialValuesSet, setInitialValuesSet] = useState(false);
-
   const [file, setFile] = useState(null);
 
   const selectFile = (e) => {
@@ -66,13 +66,7 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     }
   }, [purpose, deviceToEdit, setValue]);
 
-  /*  // Отслеживание изменений в полях формы и вывод их значений в консоль
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
-      console.log("Form field changed:", { name, type, value });
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);  */
+  
 
   const onSubmit = (data) => {
     const formData = new FormData();
@@ -122,13 +116,13 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
 
   const DeviceType = useMemo(() => {
     const typeId = watch("typeId");
-    return device.types.find((type) => type.id === typeId)?.name || "выберите тип";
+    return types.types.find((type) => type.id === typeId)?.name || "выберите тип";
   }, [ watch("typeId"), setValue]);
 
   const DeviceBrand = useMemo(() => {
     const brandId = watch("brandId");
     return (
-      device.brands.find((brand) => brand.id === brandId)?.name || "выберите бренд"
+      brands.brands.find((brand) => brand.id === brandId)?.name || "выберите бренд"
     );
   }, [watch("brandId"), setValue]);
 
@@ -156,7 +150,7 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                 <Dropdown className="mb-2">
                   <Dropdown.Toggle>{DeviceType}</Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {device.types.map((type) => (
+                    {types.types.map((type) => (
                       <Dropdown.Item
                         onClick={() => setValue("typeId", type.id)}
                         key={type.id}
@@ -169,7 +163,7 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                 <Dropdown>
                   <Dropdown.Toggle>{DeviceBrand}</Dropdown.Toggle>
                   <Dropdown.Menu>
-                    {device.brands.map((brand) => (
+                    {brands.brands.map((brand) => (
                       <Dropdown.Item
                         onClick={() => setValue("brandId", brand.id)}
                         key={brand.id}

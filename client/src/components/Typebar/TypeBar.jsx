@@ -4,10 +4,10 @@ import { Context } from "../..";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 
 const TypeBar = observer(() => {
-  const { device } = useContext(Context);
+  const { types, device } = useContext(Context);
   return (
     <ListGroup>
-      {device.types.map((type) => (
+      {types.types.map((type) => (
         <ListGroupItem
           style={{ cursor: "pointer" }}
           active={type.id === device.selectedType.id}

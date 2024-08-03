@@ -4,10 +4,10 @@ import { Card, Row } from "react-bootstrap";
 import { Context } from "../..";
 
 const Brandbar = observer(() => {
-  const { device } = useContext(Context);
+  const { device, brands } = useContext(Context);
   return (
     <Row className={"d-flex"}>
-      {device.brands.map((brand) => (
+      {brands.brands.map((brand) => (
         <Card
           style={{
             cursor: "pointer",

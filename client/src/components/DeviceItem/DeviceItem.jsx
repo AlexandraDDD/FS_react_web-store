@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Button, Card, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { DEVICE_ROUTE } from "../../utils/consts";
-import { deleteDevice } from "../../http/deviceAPI";
+import { deleteDevice } from "../../API/deviceAPI";
 import { Context } from "../..";
 
 function DeviceItem({ device, onRemove, addToBasket }) {

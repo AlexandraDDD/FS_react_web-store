@@ -1,19 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { createBrand } from "../../http/BrandAPI";
+import { createBrand } from "../../API/BrandAPI";
+import { Context } from "../..";
 
-function CreateBrand({ show, onHide, updateBrands }) {
+function CreateBrand({ show, onHide}) {
   const [value, setValue] = useState("");
+  const {brands} = useContext(Context)
   const addBrand = async () => {
-    try {
-      const data = await createBrand({ name: value });
-      setValue("");
-      onHide();
-      updateBrands();
-    } catch (error) {
-      console.error("Error adding brand:", error);
-      alert("Ошибка при добавлении бренда. Пожалуйста, попробуйте снова.");
-    }
+    brands.createBrand()
   };
 
   return (

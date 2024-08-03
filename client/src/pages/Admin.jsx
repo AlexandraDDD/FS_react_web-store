@@ -5,52 +5,37 @@ import CreateDevice from "../components/modals/CreateDevice";
 import CreateBrand from "../components/modals/CreateBrand";
 import { Context } from "..";
 import { observer } from "mobx-react-lite";
-import { fetchTypes, removeType } from "../http/TypesAPI";
-import { fetchBrands, removeBrand } from "../http/BrandAPI";
+import { fetchTypes, removeType } from "../API/TypesAPI";
+import { fetchBrands, removeBrand } from "../API/BrandAPI";
 
 const Admin = observer(() => {
-  const [brandVisible, setBrandVisible] = useState(false);
-  const [typeVisible, setTypeVisible] = useState(false);
-  const [deviceVisible, setDeviceVisible] = useState(false);
+  const { device, modals, types, brands } = useContext(Context);
 
-  const { device, modals } = useContext(Context);
-
-  const updateBrands = useCallback(() => {
-    fetchBrands().then((data) => device.setBrands(data));
+/*   const updateBrands = useCallback(() => {
+    brands.fetchBrands();
   }, [device]);
 
   const updateTypes = useCallback(() => {
-    fetchTypes().then((data) => device.setTypes(data));
-  }, [device]);
+    types.fetchTypes();
+  }, [device]); */
 
-  useEffect(() => {
+ /*  useEffect(() => {
     updateTypes();
     updateBrands();
-  }, []);
+  }, []); */
+
   const handleDeleteType = async (id) => {
-    try {
-      await removeType(id);
-      updateTypes();
-    } catch (error) {
-      console.error("Error deleting type:", error);
-      alert("Ошибка при удалении типа");
-    }
+      await types.removeType(id);
   };
   const handleDeleteBrand = async (id) => {
-    try {
-      await removeBrand(id);
-      updateBrands();
-    } catch (error) {
-      console.error("Error deleting type:", error);
-      alert("Ошибка при удалении бренда");
-    }
+      await brands.removeBrand(id);
   };
 
   return (
     <Container className="d-flex flex-column mt-5">
       <div>
         <h4>Типы</h4>
-        {device.types.map((type) => (
+        {types.types.map((type) => (
           <div
             className=" mb-2 d-flex aling-items-center justify-content-between"
             key={type.id}
@@ -69,7 +54,7 @@ const Admin = observer(() => {
       </div>
       <div>
         <h4>Бренды</h4>
-        {device.brands.map((brand) => (
+        {brands.brands.map((brand) => (
           <div
             className=" mb-2 d-flex aling-items-center justify-content-between"
             key={brand.id}
@@ -96,7 +81,7 @@ const Admin = observer(() => {
       </Button>
 
       <CreateType
-        updateTypes={updateTypes}
+/*         updateTypes={updateTypes} */
         show={modals.typeModalVisible}
         onHide={() => modals.setTypeModalVisible(false)}
       ></CreateType>
@@ -106,7 +91,7 @@ const Admin = observer(() => {
         onHide={() => modals.setDeviceModalVisible(false)}
       ></CreateDevice>
       <CreateBrand
-        updateBrands={updateBrands}
+ /*        updateBrands={updateBrands} */
         show={modals.branModaldVisible}
         onHide={() => modals.setBrandModalVisible(false)}
       ></CreateBrand>

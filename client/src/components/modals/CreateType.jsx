@@ -1,20 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { createType } from "../../http/TypesAPI";
+import { createType } from "../../API/TypesAPI";
+import { Context } from "../..";
 
-function CreateType({ show, onHide, updateTypes }) {
+function CreateType({ show, onHide }) {
+  const {types} = useContext(Context)
   const [value, setValue] = useState("");
-  const addType = async () => {
-    try {
-      const data = await createType({ name: value });
-      setValue("");
-      onHide();
-      updateTypes();
-    } catch (error) {
-      console.error("Error adding type:", error);
-      alert("Ошибка при добавлении типа. Пожалуйста, попробуйте снова.");
-    }
+
+  const addType = () => {
+    types.createType()
   };
+
   return (
     <>
       <Modal show={show} onHide={onHide} animation={false} size="lg" centered>

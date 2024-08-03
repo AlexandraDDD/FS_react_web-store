@@ -10,7 +10,7 @@ export const deleteDevice = async (id) => {
   const res = await $authhost.delete(`api/device/` + id);
   return res;
 };
-export const fetchDevices = async (brandId, typeId, limit, page) => {
+export const fetchDevicesReq = async (brandId, typeId, limit, page) => {
   const { data } = await $host.get("api/device/", {
     params: {
       brandId,

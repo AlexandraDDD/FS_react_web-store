@@ -5,7 +5,7 @@ import { AppRouter } from "./components/AppRouter";
 import { observer } from "mobx-react-lite";
 import { useContext, useEffect, useState } from "react";
 import { Context } from ".";
-import { check } from "./http/userAPI";
+import { check } from "./API/userAPI";
 import { Spinner } from "react-bootstrap";
 import { NavBar } from "./components/Navbar";
 
