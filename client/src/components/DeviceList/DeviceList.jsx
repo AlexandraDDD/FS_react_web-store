@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Row } from "react-bootstrap";
 import DeviceItem from "../DeviceItem/DeviceItem";
 import { Context } from "../..";
-import { addDevice } from "../../API/BasketAPI";
+import { addDevice, addDeviceReq } from "../../API/BasketAPI";
 
 const DeviceList = observer(() => {
   const { device } = useContext(Context);
@@ -14,12 +14,7 @@ const DeviceList = observer(() => {
     device.setDevices(device.devices.filter((d) => d.id !== id));
   };
 
-  const addToBasket = async (id) => {
-    const res = await addDevice({ deviceId: id, count: 1 });
-    if (res === 200) {
-      console.log("suc");
-    }
-  };
+  
   const filtered = useMemo(() => {
     return device.devices.filter((deviceItem) =>
       !device.searchQuery ||
@@ -31,8 +26,6 @@ const DeviceList = observer(() => {
     setFilteredDevices(filtered);
   }, [device.searchQuery, device.devices]);
 
-
-
   return (
     <Row key={device._devices.version} className="d-flex mt-3 flex-wrap">
       {filteredDevices.map((deviceItem) => (
@@ -42,7 +35,6 @@ const DeviceList = observer(() => {
           md={4}
           lg={3}
           key={deviceItem.id}
-          addToBasket={addToBasket}
           device={deviceItem}
           onRemove={removeDevice}
         />

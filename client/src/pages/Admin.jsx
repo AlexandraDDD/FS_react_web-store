@@ -1,28 +1,21 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Button, Container, ListGroupItem } from "react-bootstrap";
+import React, {  useContext, } from "react";
+import { Button, Container } from "react-bootstrap";
 import CreateType from "../components/modals/CreateType";
 import CreateDevice from "../components/modals/CreateDevice";
 import CreateBrand from "../components/modals/CreateBrand";
 import { Context } from "..";
 import { observer } from "mobx-react-lite";
-import { fetchTypes, removeType } from "../API/TypesAPI";
-import { fetchBrands, removeBrand } from "../API/BrandAPI";
+import { useEffect } from "react";
 
 const Admin = observer(() => {
-  const { device, modals, types, brands } = useContext(Context);
+  const { modals, types, brands } = useContext(Context);
 
-/*   const updateBrands = useCallback(() => {
-    brands.fetchBrands();
-  }, [device]);
-
-  const updateTypes = useCallback(() => {
-    types.fetchTypes();
-  }, [device]); */
-
- /*  useEffect(() => {
-    updateTypes();
-    updateBrands();
-  }, []); */
+  useEffect(() => {
+    if (types.types.length === 0)
+      types.fetchTypes();
+    if (brands.brands.length === 0)
+      brands.fetchBrands();
+  }, []);
 
   const handleDeleteType = async (id) => {
       await types.removeType(id);
@@ -81,7 +74,6 @@ const Admin = observer(() => {
       </Button>
 
       <CreateType
-/*         updateTypes={updateTypes} */
         show={modals.typeModalVisible}
         onHide={() => modals.setTypeModalVisible(false)}
       ></CreateType>
@@ -91,8 +83,7 @@ const Admin = observer(() => {
         onHide={() => modals.setDeviceModalVisible(false)}
       ></CreateDevice>
       <CreateBrand
- /*        updateBrands={updateBrands} */
-        show={modals.branModaldVisible}
+        show={modals.brandModalVisible}
         onHide={() => modals.setBrandModalVisible(false)}
       ></CreateBrand>
     </Container>

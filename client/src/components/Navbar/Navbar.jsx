@@ -31,7 +31,7 @@ const NavBar = observer(() => {
   
 
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar bg="dark" variant="dark" style={{height: "8vh"}}>
       <Container>
         <NavLink className="fs-3" style={{ color: "white" }} to={SHOP_ROUTE}>
           ELstore

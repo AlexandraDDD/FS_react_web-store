@@ -7,8 +7,8 @@ import { Context } from "../..";
 import { FaShoppingCart, FaStar } from "react-icons/fa";
 
 
-function DeviceItem({ device, onRemove, addToBasket }) {
-  const { user, modals, edit } = useContext(Context);
+function DeviceItem({ device, onRemove }) {
+  const { user, modals, edit, basket } = useContext(Context);
   const navigate = useNavigate();
   const [isDeleted, setIsDeleted] = useState(false);
   const deleteD = async (id) => {
@@ -22,9 +22,7 @@ function DeviceItem({ device, onRemove, addToBasket }) {
       console.error("Error deleting device:", error);
     }
   };
-  const add = (id) => {
-    addToBasket(id);
-  };
+  
 
   return (
     <Col
@@ -93,7 +91,7 @@ function DeviceItem({ device, onRemove, addToBasket }) {
               variant="primary"
               onClick={(event) => {
                 event.stopPropagation();
-                add(device.id);
+               basket.addDevice(device.id)
               }}
             >
                <FaShoppingCart />

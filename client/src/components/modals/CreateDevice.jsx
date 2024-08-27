@@ -18,18 +18,22 @@ import {
 import { observer } from "mobx-react-lite";
 import { useForm, Controller } from "react-hook-form";
 import { useMemo } from "react";
+import { FaExclamationCircle } from "react-icons/fa";
 
 const CreateDevice = observer(({ show, onHide, purpose }) => {
+
   const { device, edit, types, brands } = useContext(Context);
+  const [initialValuesSet, setInitialValuesSet] = useState(false);
   const [deviceToEdit, setDeviceToEdit] = useState(null);
-  const { register, handleSubmit, setValue, watch, reset } = useForm({
+
+  //форма
+  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm({
     defaultValues: {
       info: [],
     },
   });
 
-  
-  const [initialValuesSet, setInitialValuesSet] = useState(false);
+  //фото
   const [file, setFile] = useState(null);
 
   const selectFile = (e) => {
@@ -37,20 +41,23 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     setValue("img", e.target.files[0]);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (edit.selectDevice) {
-        try {
-          const data = await fetchOneDevice(edit.selectDevice.id);
-          setDeviceToEdit(data);
-        } catch (error) {
-          console.error("Error fetching device:", error);
+  //получение с сервера выбранного девайса
+  if (purpose === 'edit') {
+    useEffect(() => {
+      const fetchData = async () => {
+        if (edit.selectDevice) {
+          try {
+            const data = await fetchOneDevice(edit.selectDevice.id);
+            setDeviceToEdit(data);
+          } catch (error) {
+            console.error("Error fetching device:", error);
+          }
         }
-      }
-    };
+      };
 
-    fetchData();
-  }, [edit.selectDevice]);
+      fetchData();
+    }, [edit.selectDevice]);
+  }
 
   // начальная установка значений
   useEffect(() => {
@@ -61,13 +68,12 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
       setValue("typeId", deviceToEdit.typeId);
       setValue("brandId", deviceToEdit.brandId);
       setValue("img", deviceToEdit.img);
-
       setInitialValuesSet(true);
     }
   }, [purpose, deviceToEdit, setValue]);
 
-  
 
+  // отправка формы
   const onSubmit = (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
@@ -75,15 +81,13 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     if (data.img) {
       formData.append("img", data.img);
     }
-    formData.append("brandId", data.brandId );
-    formData.append("typeId", data.typeId );
+    formData.append("brandId", data.brandId);
+    formData.append("typeId", data.typeId);
     formData.append("info", JSON.stringify(data.info));
-
     if (purpose === "create") {
-      createDevice(formData).then((data) => onHide());
+      device.createDevice(formData).then(() => onHide());
     } else if (purpose === "edit" && deviceToEdit) {
-      updateDevice(deviceToEdit.id, formData).then((data) => {
-        device.updateDevice(data);
+      device.updateDevice(deviceToEdit.id, formData).then(() => {
         onHide();
       });
     }
@@ -117,7 +121,7 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
   const DeviceType = useMemo(() => {
     const typeId = watch("typeId");
     return types.types.find((type) => type.id === typeId)?.name || "выберите тип";
-  }, [ watch("typeId"), setValue]);
+  }, [watch("typeId"), setValue]);
 
   const DeviceBrand = useMemo(() => {
     const brandId = watch("brandId");
@@ -126,10 +130,10 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
     );
   }, [watch("brandId"), setValue]);
 
-  
+
   return (
     <>
-      <Modal show={show} onHide={onHide} animation={false} size="lg" centered>
+      <Modal show={show} onHide={onHide} animation={true} size="lg" centered>
         {(purpose === 'edit' && !initialValuesSet) ?
           <>
             <Spinner />
@@ -147,11 +151,15 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                 className="d-flex flex-column aling-items-center justify-content-center"
                 onSubmit={handleSubmit(onSubmit)}
               >
-                <Dropdown className="mb-2">
-                  <Dropdown.Toggle>{DeviceType}</Dropdown.Toggle>
-                  <Dropdown.Menu>
+                <Dropdown className="mb-2"  >
+                  <Dropdown.Toggle>
+                    {DeviceType} &nbsp;
+                    {!watch("typeId") && errors.typeId && <FaExclamationCircle className="ml-2 text-white" />}
+                    </Dropdown.Toggle>
+                  <Dropdown.Menu  >
                     {types.types.map((type) => (
                       <Dropdown.Item
+                        {...register("typeId", { required: 'Тип обязателен' })}
                         onClick={() => setValue("typeId", type.id)}
                         key={type.id}
                       >
@@ -160,11 +168,17 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                     ))}
                   </Dropdown.Menu>
                 </Dropdown>
+
                 <Dropdown>
-                  <Dropdown.Toggle>{DeviceBrand}</Dropdown.Toggle>
+                  <Dropdown.Toggle  >
+                    {DeviceBrand}
+                    &nbsp;
+                    {!watch("brandId") && errors.brandId && <FaExclamationCircle className="ml-2 text-white" />}
+                    </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {brands.brands.map((brand) => (
                       <Dropdown.Item
+                        {...register("brandId", { required: 'Бренд обязателен' })}
                         onClick={() => setValue("brandId", brand.id)}
                         key={brand.id}
                       >
@@ -176,17 +190,17 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                 <Form.Control
                   className="mt-3"
                   placeholder="Введите название устройства"
-                  {...register("name")}
+                  {...register("name", { required: true })}
                 />
                 <Form.Control
                   className="mt-3"
                   placeholder="Введите стоимость устройства"
                   type="number"
-                  {...register("price")}
+                  {...register("price", { required: true })}
                 />
                 {(!file && purpose === 'edit') ? (
                   <>
-                  
+
                     <h5 className="mt-2"> старое фото</h5>
                     <Image
                       style={{ width: 200, height: 200 }}
@@ -196,12 +210,13 @@ const CreateDevice = observer(({ show, onHide, purpose }) => {
                 ) : (
                   <>
                     <h5 className="mt-2">
-                      {purpose === 'create' ? 'фото' :   'новое фото'}
-                      </h5>
+                      {purpose === 'create' ? 'фото' : 'новое фото'}
+                    </h5>
                     <Image style={{ width: 200, height: 200 }} src={file} />
                   </>
                 )}
                 <Form.Control
+                  required={purpose === "create"}
                   className="mt-3"
                   placeholder="Загрузите изображение устройства"
                   type="file"

@@ -1,4 +1,5 @@
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable } from "mobx";
+import { addDeviceReq, fetchBasketReq, removeDeviceReq } from "../API/BasketAPI";
 
 export default class BasketStore {
   constructor() {
@@ -17,30 +18,69 @@ export default class BasketStore {
     this._Bsdevices = Bsdevices;
   }
 
-  addDevice(deviceId) {
-    const device = this._Bsdevices.find((d) => d.deviceId === deviceId);
+  fetchBasket = action(async () => {
+    const response = await fetchBasketReq();
+    this._Bsdevices = response;
 
-    if (device) {
-      device.count++;
-    } else {
-      this._Bsdevices.push({ deviceId, count: 1 });
+    this.calculateTotalCount();
+/*     this.calculateTotalPrice(); */
+  });
+
+
+  async addDevice(deviceId) {
+    const response = await addDeviceReq({ deviceId, count: 1 });
+    if (response.status === 200) {
+      const device = this._Bsdevices.find((d) => d.deviceId === deviceId);
+
+      if (device) {
+        device.count++;
+      } else {
+        this._Bsdevices.push({ deviceId, count: 1 });
+      }
+
+      this._totalPrice += this.getDeviceById(deviceId).price;
+      this._BScount++;
     }
-
-    this._totalPrice += this.getDeviceById(deviceId).price;
-    this._BScount++;
   }
-
-  removeDevice(deviceId) {
+// не уменьшает на единицу на сервере
+  async removeDevice(deviceId) {
     const index = this._Bsdevices.findIndex((d) => d.deviceId === deviceId);
-
+  
     if (index !== -1) {
       const device = this._Bsdevices[index];
-      this._totalPrice -= device.price * this._Bsdevices[index].count;
-      this._count -= this._Bsdevices[index].count;
-      this._Bsdevices.splice(index, 1);
-      this._BScount -= device.count;
+  
+      if (device.count > 1) {
+        device.count--;
+        this._totalPrice -= device.price;
+        this._count--;
+      } else {
+        const response = await removeDeviceReq(deviceId);
+        if (response.status === 200) {
+          this._totalPrice -= device.price;
+          this._count--;
+          this._Bsdevices.splice(index, 1);
+        }
+      }
+  
+      this._BScount--;
     }
   }
+  
+  calculateTotalCount() {
+    let totalCount = 0;
+    this._Bsdevices.forEach((device) => {
+      totalCount += device.count;
+    });
+    this._BScount = totalCount;
+  }
+
+  /* calculateTotalPrice() {
+    let totalPrice = 0;
+    this._Bsdevices.forEach((device) => {
+      totalPrice += device.price * device.count;
+    });
+    this._totalPrice = totalPrice;
+  } */
 
   clearBasket() {
     this._Bsdevices = [];

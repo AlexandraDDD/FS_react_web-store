@@ -1,18 +1,22 @@
 import React, { useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { createBrand } from "../../API/BrandAPI";
 import { Context } from "../..";
 
-function CreateBrand({ show, onHide}) {
+function CreateBrand({show, onHide}) {
+  console.log("CreateBrand rendered");
   const [value, setValue] = useState("");
   const {brands} = useContext(Context)
+
   const addBrand = async () => {
-    brands.createBrand()
+    if (value.trim() !== "") {
+      brands.createBrand({name: value})
+      setValue(""); 
+    }
   };
 
   return (
     <>
-      <Modal show={show} onHide={onHide} animation={false} size="lg" centered>
+      <Modal show={show} onHide={onHide} animation={true}  size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Добавить бренд</Modal.Title>
         </Modal.Header>

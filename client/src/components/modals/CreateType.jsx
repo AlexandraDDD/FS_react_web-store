@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { createType } from "../../API/TypesAPI";
 import { Context } from "../..";
 
 function CreateType({ show, onHide }) {
@@ -8,12 +7,16 @@ function CreateType({ show, onHide }) {
   const [value, setValue] = useState("");
 
   const addType = () => {
-    types.createType()
+    if (value.trim() !== "") {
+      types.createType({name: value});
+      setValue(""); 
+    }
   };
+  
 
   return (
     <>
-      <Modal show={show} onHide={onHide} animation={false} size="lg" centered>
+      <Modal show={show} onHide={onHide} animation={true} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>Добавить тип</Modal.Title>
         </Modal.Header>
@@ -23,6 +26,7 @@ function CreateType({ show, onHide }) {
               placeholder="введите название типа"
               value={value}
               onChange={(e) => setValue(e.target.value)}
+              required
             ></Form.Control>
           </Form>
         </Modal.Body>

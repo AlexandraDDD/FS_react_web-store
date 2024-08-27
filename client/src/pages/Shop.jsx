@@ -11,9 +11,6 @@ import CreateDevice from "../components/modals/CreateDevice";
 import { action } from "mobx";
 import SearchBar from "../components/SearchBar/SearchBar";
 
-
-
-
 const Shop = observer(() => {
   const { device, modals, types, brands } = useContext(Context);
 
