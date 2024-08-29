@@ -12,15 +12,17 @@ import { action } from "mobx";
 import SearchBar from "../components/SearchBar/SearchBar";
 
 const Shop = observer(() => {
-  const { device, modals, types, brands } = useContext(Context);
+  const { device, modals, types, brands, basket } = useContext(Context);
 
   useEffect(() => {
     if (types.types.length === 0)
       types.fetchTypes();
     if (brands.brands.length === 0)
       brands.fetchBrands();
+ 
   }, []);
 
+ 
   useEffect(() => {
     action(() => {
       device.fetchDevices();

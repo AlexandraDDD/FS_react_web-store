@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState,  } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
@@ -18,20 +18,29 @@ import { FaShoppingCart } from "react-icons/fa";
 
 const NavBar = observer(() => {
   const { user, basket } = useContext(Context);
+  const [Basketcount, setBasketCount] = useState(0)
   
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (basket.devices.length === 0)  
+      basket.fetchBasket();
+  }, []);
+
+  useEffect(() => {
+    setBasketCount(basket.BScount)
+    // Обновляем значок количества товаров в корзине при изменении basket.BScount
+  }, [basket.BScount]);
+  
   const logOut = () => {
     user.setUser({});
     user.setIsAuth(false);
     navigate(LOGIN_ROUTE);
   };
   
-  console.log(basket.BScount);
   
-
   return (
-    <Navbar bg="dark" variant="dark" style={{height: "8vh"}}>
+    <Navbar bg="dark" fixed="top" variant="dark" style={{height: "8vh"}}>
       <Container>
         <NavLink className="fs-3" style={{ color: "white" }} to={SHOP_ROUTE}>
           ELstore
@@ -50,7 +59,7 @@ const NavBar = observer(() => {
               className={styles.btn}
             >
               корзина    <FaShoppingCart />
-              {basket.BScount > 0 && (
+              {Basketcount > 0 && (
                 <span
                   style={{
                     backgroundColor: "red",
@@ -63,7 +72,7 @@ const NavBar = observer(() => {
                     top: "-5px",
                   }}
                 >
-                  {basket.BScount}
+                  {Basketcount}
                 </span>
               )}
             </Button>

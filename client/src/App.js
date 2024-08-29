@@ -26,7 +26,9 @@ const App = observer(() => {
   return (
     <BrowserRouter>
       <NavBar />
+      <div style={{ paddingTop: "6vh" }}>
       <AppRouter />
+    </div>
     </BrowserRouter>
   );
 });

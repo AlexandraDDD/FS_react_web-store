@@ -3,8 +3,68 @@ const path = require('path')
 const { Device, DeviceInfo } = require('../models/models')
 const ApiError = require('../error/ApiError')
 const { title } = require('process')
+const { Op } = require('sequelize')
 
 class DeviceController {
+
+    async getByIds(req, res) {
+
+        const { ids } = req.query;
+        const idArray = ids.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+        console.log(idArray);
+
+        let devices = await Device.findAll({
+            where: {
+                id: {
+                    [Op.in]: idArray
+                }
+            }
+        });
+
+        return res.json(devices);
+    }
+
+    async getAll(req, res) {
+        let { brandId, typeId, limit, page } = req.query
+
+        brandId = Number(brandId)
+        typeId = Number(typeId)
+        // Проверяем, что brandId и typeId являются числами
+        if (brandId && isNaN(brandId)) {
+            return res.status(400).json({ message: 'Invalid brandId' });
+        }
+        if (typeId && isNaN(typeId)) {
+            return res.status(400).json({ message: 'Invalid typeId' });
+        }
+        console.log(brandId, typeId, limit, page);
+        page = page || 1
+        limit = limit || 4
+        let offset = page * limit - limit
+        let devices;
+        if (!brandId && !typeId) {
+            devices = await Device.findAndCountAll({ limit, offset });
+        }
+        if (brandId && !typeId) {
+            devices = await Device.findAndCountAll({ where: { brandId }, limit, offset });
+        }
+        if (!brandId && typeId) {
+            devices = await Device.findAndCountAll({ where: { typeId }, limit, offset });
+        }
+        if (brandId && typeId) {
+            devices = await Device.findAndCountAll({ where: { brandId, typeId }, limit, offset });
+        }
+
+        return res.json(devices)
+    }
+    async getOne(req, res) {
+        const { id } = req.params
+        const device = await Device.findOne({
+            where: { id },
+            include: [{ model: DeviceInfo, as: 'info' }]
+        })
+        return res.json(device)
+    }
+
     async create(req, res, next) {
         try {
             let { name, price, brandId, typeId, info } = req.body
@@ -53,46 +113,7 @@ class DeviceController {
         }
 
     }
-    async getAll(req, res) {
-        let { brandId, typeId, limit, page } = req.query
-       
-        brandId = Number(brandId)
-        typeId = Number(typeId)
-        // Проверяем, что brandId и typeId являются числами
-        if (brandId && isNaN(brandId)) {
-            return res.status(400).json({ message: 'Invalid brandId' });
-        }
-        if (typeId && isNaN(typeId)) {
-            return res.status(400).json({ message: 'Invalid typeId' });
-        }
-        console.log(brandId, typeId, limit, page);
-        page = page || 1
-        limit = limit || 4
-        let offset = page * limit - limit
-        let devices;
-        if (!brandId && !typeId) {
-            devices = await Device.findAndCountAll({ limit, offset });
-        }
-        if (brandId && !typeId) {
-            devices = await Device.findAndCountAll({ where: { brandId }, limit, offset });
-        }
-        if (!brandId && typeId) {
-            devices = await Device.findAndCountAll({ where: { typeId }, limit, offset });
-        }
-        if (brandId && typeId) {
-            devices = await Device.findAndCountAll({ where: { brandId, typeId }, limit, offset });
-        }
 
-        return res.json(devices)
-    }
-    async getOne(req, res) {
-        const { id } = req.params
-        const device = await Device.findOne({
-            where: { id },
-            include: [{ model: DeviceInfo, as: 'info' }]
-        })
-        return res.json(device)
-    }
     async update(req, res, next) {
         try {
             const { id } = req.params;

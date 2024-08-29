@@ -45,23 +45,29 @@ class BasketController {
     try {
       const { deviceId } = req.body;
       const { id } = req.user;
-
+  
       const basket = await Basket.findOne({ where: { userId: id } });
       const basketDevice = await BasketDevice.findOne({
         where: { basketId: basket.id, deviceId },
       });
-
+  
       if (!basketDevice) {
         return next(ApiError.badRequest("Товар не найден в корзине"));
       }
-
-      await basketDevice.destroy();
-
+  
+      if (basketDevice.count > 1) {
+        basketDevice.count -= 1;
+        await basketDevice.save();
+      } else {
+        await basketDevice.destroy();
+      }
+  
       return res.json({ message: "Товар успешно удален из корзины" });
     } catch (error) {
       next(ApiError.badRequest(error.message));
     }
   }
+  
 
   async clearBasket(req, res, next) {
     try {

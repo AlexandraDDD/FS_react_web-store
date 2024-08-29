@@ -1,95 +1,78 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, Row, Col, Table, Button, Spinner } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import { Context } from "..";
-import { fetchBasket, removeDevice, removeDeviceReq } from "../API/BasketAPI";
-import { fetchDevices } from "../API/deviceAPI";
 import { action } from "mobx";
 import {
   MDBBtn,
   MDBCard,
   MDBCardBody,
   MDBCardImage,
-  MDBCardText,
   MDBCol,
   MDBContainer,
   MDBIcon,
-  MDBInput,
   MDBRow,
   MDBTypography,
 } from "mdb-react-ui-kit";
-import { FaShoppingCart, FaTrashAlt, FaTimes } from "react-icons/fa";
+import { FaMinus, FaPlus, FaTrashAlt } from "react-icons/fa";
+import { observer } from "mobx-react-lite";
+import { fetchDevicesIdsReq } from "../API/deviceAPI";
 
 
-function Basket() {
-  const { device, basket } = useContext(Context);
+const Basket = observer(() => {
+  const { basket } = useContext(Context);
   const [loading, setLoading] = useState(true);
   const [totalPrice, setTotalPrice] = useState(0);
   const [basketDevices, setBasketDevices] = useState([]);
 
   useEffect(() => {
-    if (device.devices.length === 0) {
-      action(() => {
-        device.fetchDevices().finally(() => {
-          console.log(device.devices);
+    // Получаем данные корзины
+    let basketPromise = Promise.resolve();
+    if (basket.devices.length === 0) {
+      basketPromise = action(() => {
+        return basket.fetchBasket().finally(() => {
+          console.log(basket.devices);
         });
       })();
     } else {
-      console.log("товары уже загружены");
+      console.log("Товары в корзине уже загружены");
     }
-    action(() => {
-      basket.fetchBasket().finally(() => {
-        console.log(basket.devices);
+    // После получения данных корзины, извлекаем идентификаторы и делаем запрос за полными устройствами
+    basketPromise.then(() => {
+      //массив id нужных товаров
+      const ids = basket.devices.map(device => device.deviceId);
+
+      let devicesPromise = fetchDevicesIdsReq(ids).then(devices => {
+        const updatedDevices = devices.map(device => {
+          const basketDevice = basket.devices.find(basketDevice => basketDevice.deviceId === device.id);
+          return { ...device, count: basketDevice.count };
+        });
+        setBasketDevices(updatedDevices);
       });
-    })();
 
-    Promise.all([device.fetchDevices(), basket.fetchBasket()]).finally(() => {
-      setLoading(false);
+      Promise.all([devicesPromise]).finally(() => {
+        setLoading(false);
+      });
     });
-  }, []);
-
+  }, [basket.BScount]);
 
   useEffect(() => {
-    if (!loading && device.devices.length > 0 && basket.devices.length > 0) {
-      const bDevices = basket.devices
-        .map((basketDevice) => {
-          const d = device.devices.find(
-            (device) => device.id === basketDevice.deviceId,
-          );
-          /*  if (d && d.price && d.count) { */
-          return { ...d, count: basketDevice.count };
-          /*    } 
-              return null; */
-        })
-      /*    .filter((device) => device !== null); */
-
-      console.log(bDevices);
-
-      setBasketDevices(bDevices);
-
-      let totalPrice = 0;
-      if (basketDevices.length > 0) {
-        basketDevices.forEach((device) => {
-          if (device.price && device.count) {
-            totalPrice += device.price * device.count;
-          }
-        });
-      }
+    let totalPrice = 0;
+    if (basketDevices.length > 0) {
+      basketDevices.forEach((device) => {
+        if (device.price && device.count) {
+          totalPrice += device.price * device.count;
+        }
+      });
       setTotalPrice(totalPrice);
-
-      console.log(totalPrice);
-
-
     }
-  }, [loading, basket.devices]);
-
-
+  }, [basketDevices, basket.BScount]);
 
   if (loading) {
     return <Spinner animation="border" />;
   }
 
   return (
-    <section style={{ backgroundColor: "#eee", height: "100%" }}>
+    <section style={{ backgroundColor: "#eee", height: "100%", minHeight: "100vh"}}>
       <MDBContainer className="py-5 h-100">
         <MDBRow className="justify-content-center align-items-center h-100">
           <MDBCol size="12">
@@ -113,7 +96,7 @@ function Basket() {
                             <MDBCol md="2" lg="2" xl="2">
                               <MDBCardImage
                                 src={process.env.REACT_APP_API_URL + device.img}
-                                fluid className="rounded-3" alt="Cotton T-shirt" />
+                                fluid className="rounded-3" alt="device img" style={{maxHeight: 200}} />
                             </MDBCol>
                             <MDBCol md="3" lg="3" xl="3">
                               <MDBTypography tag="h5" className="text-muted">
@@ -121,20 +104,31 @@ function Basket() {
                               </MDBTypography>
                               <MDBTypography tag="h5" className="text-black mb-0">
                                 {device.name}
+                          
                               </MDBTypography>
                             </MDBCol>
                             <MDBCol md="2" lg="2" xl="2" className="d-flex align-items-center">
-                              {/*    <MDBBtn color="link" className="px-2">
-                                <MDBIcon fas icon="minus" />
-                              </MDBBtn> */}
-                              <MDBInput type="number" min="0" defaultValue={device.count} size="sm" />
-                              {/*   <MDBBtn color="link" className="px-2">
-                                <MDBIcon fas icon="plus" />
-                              </MDBBtn> */}
+                              <Button variant="light" size="sm"
+                               onClick={(event) => {
+                                event.stopPropagation();
+                                basket.removeDevice(device.id)
+                              }} 
+                              > <FaMinus /></Button>
+
+                              <h5>{device.count}</h5>
+
+
+                              <Button variant="light" size="sm" 
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                basket.addDevice(device.id)
+                              }} >
+                                <FaPlus />
+                              </Button>
                             </MDBCol>
                             <MDBCol md="4" lg="3" xl="3" className="text-end">
                               <MDBTypography tag="h5" className="mb-0">
-                                {device.price.toLocaleString("ru-RU", { style: "currency", currency: "RUB" })}
+                                {device.price?.toLocaleString("ru-RU", { style: "currency", currency: "RUB" })}
                               </MDBTypography>
                             </MDBCol>
                             <MDBCol md="1" lg="1" xl="1" className="text-end">
@@ -169,9 +163,12 @@ function Basket() {
                         <MDBTypography tag="h5">{totalPrice.toLocaleString("ru-RU", { style: "currency", currency: "RUB" })}</MDBTypography>
                       </div>
 
-                      <MDBBtn color="dark" block size="md">
+                      <Button variant="dark" block size="md">
                         Оформить заказ
-                      </MDBBtn>
+                      </Button>
+                      <Button variant="dark" >
+                        Очистить корзину(метод на серваке)
+                      </Button>
                     </div>
                   </MDBCol>
                 </MDBRow>
@@ -183,6 +180,6 @@ function Basket() {
     </section>
 
   );
-}
+})
 
 export default Basket;

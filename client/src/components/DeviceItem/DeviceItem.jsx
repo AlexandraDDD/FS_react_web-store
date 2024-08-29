@@ -41,12 +41,12 @@ function DeviceItem({ device, onRemove }) {
       >
         <Image
           className="object-fit-cover"
-          style={{ width: 200, height: 200 }}
+          style={{ width: 180, borderRadius: 5}}
           src={process.env.REACT_APP_API_URL + device.img}
         ></Image>
         <div
           className="p-2 d-flex flex-column justify-content-between"
-          style={{ width: "100%" }}
+          style={{ width: "100%", marginLeft: 15 }}
         >
           <div className="d-flex pl-3 pr-3 align-items-center">
             <h5 style={{ margin: 0, marginRight: 5 }}>{device.name}</h5>
@@ -91,7 +91,11 @@ function DeviceItem({ device, onRemove }) {
               variant="primary"
               onClick={(event) => {
                 event.stopPropagation();
-               basket.addDevice(device.id)
+                basket.addDevice(device.id);
+
+                console.log(basket.devices);
+                console.log(basket.BScount);
+                
               }}
             >
                <FaShoppingCart />

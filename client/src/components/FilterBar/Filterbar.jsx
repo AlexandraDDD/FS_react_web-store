@@ -14,11 +14,13 @@ const Filterbar = observer(() => {
 
   return (
     <Row className="mt-3 d-flex justify-content-center align-items-center">
-      <Button style={{ width: 200 }} variant={"outline-dark"} onClick={all}>
-        Все товары
-      </Button>
-      <Form.Group as={Row} controlId="formLimit" className="d-flex align-items-center ml-3 mt-4">
-        <Form.Label column sm={8} className="mb-0 mr-2">Кол-во товаров на странице:</Form.Label>
+      <Col md={12} className="text-center">
+        <Button className="w-100" variant={"outline-dark"} onClick={all}>
+          Все товары
+        </Button>
+      </Col>
+      <Form.Group as={Row} controlId="formLimit" className="d-flex align-items-center ml-3 mt-3   mb-sm-3">
+        <Form.Label column sm={8} className="mb-0 mr-2 p-0">Кол-во товаров на странице:</Form.Label>
         <Col sm={4}>
           <Form.Control as="select" value={device.limit} onChange={(e) => device.setLimit(Number(e.target.value))}>
             {quantity.map((q) => (
