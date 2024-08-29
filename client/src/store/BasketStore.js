@@ -37,15 +37,15 @@ export default class BasketStore {
     const index = this._Bsdevices.findIndex((d) => d.deviceId === deviceId);
     if (index !== -1) {
       const device = this._Bsdevices[index];
-
-      if (device.count > 1) {
-        device.count--;
-      } else {
-        const response = await removeDeviceReq(deviceId);
-        if (response.status === 200) {
-          this._Bsdevices.splice(index, 1);
-        }
+      const response = await removeDeviceReq(deviceId);
+      device.count--;
+      
+      if(device.count == 0){
+        this._Bsdevices.splice(index, 1);
       }
+     
+
+
 
     }
     this._BScount--;
