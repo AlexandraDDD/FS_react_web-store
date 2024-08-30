@@ -32,7 +32,7 @@ export default class BasketStore {
 
     this._BScount++;
   }
-  // не уменьшает на единицу на сервере
+  
   async removeDevice(deviceId) {
     const index = this._Bsdevices.findIndex((d) => d.deviceId === deviceId);
     if (index !== -1) {
@@ -43,10 +43,6 @@ export default class BasketStore {
       if(device.count == 0){
         this._Bsdevices.splice(index, 1);
       }
-     
-
-
-
     }
     this._BScount--;
   }

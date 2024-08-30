@@ -23,8 +23,18 @@ const DeviceList = observer(() => {
   }, [device.searchQuery, device.devices]);
 
   useEffect(() => {
-    setFilteredDevices(filtered);
-  }, [device.searchQuery, device.devices]);
+    const sortedDevices = [...filtered];
+    if (device.sortType === "price") {
+      sortedDevices.sort((a, b) =>
+        device.priceSortDirection === "asc" ? a.price - b.price : b.price - a.price
+      );
+    } else if (device.sortType === "rating") {
+      sortedDevices.sort((a, b) =>
+        device.ratingSortDirection === "asc" ? a.rating - b.rating : b.rating - a.rating
+      );
+    }
+    setFilteredDevices(sortedDevices);
+  }, [device.searchQuery, device.devices, device.sortType, device.priceSortDirection, device.ratingSortDirection]);
 
   return (
     <Row key={device._devices.version} className="d-flex mt-3 flex-wrap">

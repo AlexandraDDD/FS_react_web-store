@@ -12,6 +12,7 @@ module.exports = function ( req, res, next){
         }
         const decoded = jwt.verify(token, process.env.JWT_KEY)
         req.user = decoded
+        
         const basket =  Basket.findOne({ where: { userId: decoded.id } });
         req.user.basket = basket ? basket.id : null;
         next();

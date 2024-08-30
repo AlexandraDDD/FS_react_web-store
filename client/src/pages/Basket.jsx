@@ -115,7 +115,7 @@ const Basket = observer(() => {
                               }} 
                               > <FaMinus /></Button>
 
-                              <h5>{device.count}</h5>
+                              <h5 style={{width: 20, textAlign: "center"}}>{device.count}</h5>
 
 
                               <Button variant="light" size="sm" 
@@ -166,9 +166,9 @@ const Basket = observer(() => {
                       <Button variant="dark" block size="md">
                         Оформить заказ
                       </Button>
-                      <Button variant="dark" >
+                    {/*   <Button variant="dark" >
                         Очистить корзину(метод на серваке)
-                      </Button>
+                      </Button> */}
                     </div>
                   </MDBCol>
                 </MDBRow>

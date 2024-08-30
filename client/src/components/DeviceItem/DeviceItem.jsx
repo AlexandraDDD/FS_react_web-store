@@ -5,7 +5,9 @@ import { DEVICE_ROUTE } from "../../utils/consts";
 import { deleteDevice } from "../../API/deviceAPI";
 import { Context } from "../..";
 import { FaShoppingCart, FaStar } from "react-icons/fa";
-
+import Rating from "react-rating";
+import { FaStar as FaStarSolid } from "react-icons/fa";
+import { FaRegStar as FaStarRegular } from "react-icons/fa";
 
 function DeviceItem({ device, onRemove }) {
   const { user, modals, edit, basket } = useContext(Context);
@@ -53,8 +55,14 @@ function DeviceItem({ device, onRemove }) {
           </div>
           <p>{device.price.toLocaleString("ru-RU", { style: "currency", currency: "RUB" })}</p>
           <div className="d-flex align-items-center ">
-            <p style={{ margin: 0, marginRight: 3 }}>{device.rating}</p>
-            <FaStar />
+            <p style={{ margin: 0, marginRight: 3, paddingTop: 4 }}>{device.rating}</p>
+            <Rating
+            initialRating={device.rating}
+            readonly
+            emptySymbol={<FaStarRegular />}
+            fullSymbol={<FaStarSolid  />}
+          />
+
           </div>
        
           <div className="d-flex align-items-end justify-content-end">

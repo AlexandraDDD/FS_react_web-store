@@ -1,12 +1,21 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, ButtonGroup, Col, Form, Row } from "react-bootstrap";
 import { Context } from "../..";
 
 const Filterbar = observer(() => {
   const { device } = useContext(Context);
   const quantity = [5, 10, 15];
 
+  const handlePriceSort = (direction) => {
+    device.setSortType("price");
+    device.setPriceSortDirection(direction);
+  };
+
+  const handleRatingSort = (direction) => {
+    device.setSortType("rating");
+    device.setRatingSortDirection(direction);
+  };
   const all = () => {
     device.setSelectedType({});
     device.setSelectedBrand({});
@@ -31,6 +40,44 @@ const Filterbar = observer(() => {
           </Form.Control>
         </Col>
       </Form.Group>
+
+      <div className=" d-flex  justify-content-between align-items-center w-50 ">
+        <Button 
+          variant={device.sortType === "price" && device.priceSortDirection === "asc" ? "secondary" : "outline-secondary"}
+          onClick={() => handlePriceSort("asc")}
+        >
+          ↑
+        </Button>
+        <p>Цена </p>
+        <Button
+          variant={device.sortType === "price" && device.priceSortDirection === "desc" ? "secondary" : "outline-secondary"}
+          onClick={() => handlePriceSort("desc")}
+        >
+        ↓
+        </Button>
+      </div>
+      <div className=" d-flex  justify-content-between align-items-center w-50 ">
+        <Button
+          variant={device.sortType === "rating" && device.ratingSortDirection === "asc" ? "secondary" : "outline-secondary"}
+          onClick={() => handleRatingSort("asc")}
+        >
+         ↑
+        </Button>
+        <p>Рейтинг </p>
+        <Button
+          variant={device.sortType === "rating" && device.ratingSortDirection === "desc" ? "secondary" : "outline-secondary"}
+          onClick={() => handleRatingSort("desc")}
+        >
+         ↓
+        </Button>
+      </div>
+      {/* <Form.Group controlId="formSort">
+      <Form.Label>Сортировать по:</Form.Label>
+      <Form.Control as="select" value={device.sortType} onChange={handleSortChange}>
+        <option value="rating">Рейтингу</option>
+        <option value="price">Цене</option>
+      </Form.Control>
+    </Form.Group> */}
     </Row>
   );
 });

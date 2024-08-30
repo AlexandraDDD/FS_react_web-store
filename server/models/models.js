@@ -78,5 +78,5 @@ Type.belongsToMany(Brand, { through: TypeBrand })
 Brand.belongsToMany(Type, { through: TypeBrand })
 
 module.exports = {
-    User, Basket, BasketDevice, Device, Type, TypeBrand, DeviceInfo, Brand
+    User, Basket, BasketDevice, Device, Type, TypeBrand, DeviceInfo, Brand, Rating
 }

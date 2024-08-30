@@ -10,6 +10,9 @@ export default class DeviceStore {
     this._totalCount = 0;
     this._limit = 5;
     this._searchQuery = "";
+    this._sortType = "rating";
+    this._priceSortDirection = "desc"; 
+    this._ratingSortDirection = "desc"; 
 
     makeAutoObservable(this);
   }
@@ -33,6 +36,29 @@ export default class DeviceStore {
       this._devices[index] = updatedDevice;
     }
   });
+
+  setSortType(sortType) {
+    this._sortType = sortType;
+  }
+
+  get sortType() {
+    return this._sortType;
+  }
+  setPriceSortDirection(direction) {
+    this._priceSortDirection = direction;
+  }
+
+  setRatingSortDirection(direction) {
+    this._ratingSortDirection = direction;
+  }
+
+  get priceSortDirection() {
+    return this._priceSortDirection;
+  }
+
+  get ratingSortDirection() {
+    return this._ratingSortDirection;
+  }
 
   setSearchQuery(query) {
     this._searchQuery = query;

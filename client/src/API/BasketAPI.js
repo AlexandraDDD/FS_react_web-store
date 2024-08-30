@@ -1,5 +1,5 @@
-import { $authhost, $host } from ".";
-import { jwtDecode } from "jwt-decode";
+import { $authhost } from ".";
+
 
 export const addDeviceReq = async (basketDevice) => {
   const { data } = await $authhost.post("api/basket/add", basketDevice);
