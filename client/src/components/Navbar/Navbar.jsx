@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState,  } from "react";
+import React, { useContext, useEffect, useState, } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import { NavLink } from "react-router-dom";
@@ -19,11 +19,12 @@ import { FaShoppingCart } from "react-icons/fa";
 const NavBar = observer(() => {
   const { user, basket } = useContext(Context);
   const [Basketcount, setBasketCount] = useState(0)
-  
+
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    if (basket.devices.length === 0)  
+    if (basket.devices.length === 0)
       basket.fetchBasket();
   }, []);
 
@@ -31,28 +32,32 @@ const NavBar = observer(() => {
     setBasketCount(basket.BScount)
     // Обновляем значок количества товаров в корзине при изменении basket.BScount
   }, [basket.BScount]);
-  
+
   const logOut = () => {
     user.setUser({});
     user.setIsAuth(false);
     navigate(LOGIN_ROUTE);
   };
-  
-  
+
+
   return (
-    <Navbar bg="dark" fixed="top" variant="dark" style={{height: "8vh"}}>
+    <Navbar bg="dark" fixed="top" variant="dark" style={{ height: "8vh" }}>
       <Container>
         <NavLink className="fs-3" style={{ color: "white" }} to={SHOP_ROUTE}>
           ELstore
         </NavLink>
         {user.isAuth ? (
           <Nav className="ml-auto" style={{ color: "white" }}>
-            <Button
-              className={styles.btn}
-              onClick={() => navigate(ADMIN_ROUTE)}
-            >
-              Админ панель
-            </Button>
+            <p className="text-center">{user.user.email} </p>
+            
+            {user.user.role == 'ADMIN' &&
+              <Button
+                className={styles.btn}
+                onClick={() => navigate(ADMIN_ROUTE)}
+              >
+                Админ панель
+              </Button>
+            }
             <Button
               variant={"outline-light"}
               onClick={() => navigate(BASKET_ROUTE)}

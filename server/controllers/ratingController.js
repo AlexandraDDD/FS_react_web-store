@@ -21,14 +21,13 @@ class RatingController {
                 return res.status(409).json({ message: 'Rating already exists' });
               }
               
-
             const rating = await Rating.create({ userId: id, deviceId, rate });
 
             const ratings = await Rating.findAll({ where: { deviceId } });
             const sum = ratings.reduce((acc, rating) => acc + rating.rate, 0);
             const average = sum / ratings.length;
     
-            device.rating = average;
+            device.rating = parseFloat(average.toFixed(1));
             await device.save();
 
             return res.json(rating);

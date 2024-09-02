@@ -36,14 +36,14 @@ function DeviceItem({ device, onRemove }) {
         className="d-flex border border-secondary rounded mb-3 p-3 "
         style={{
           width: "100%",
-          height: 200,
+          height: 210,
           cursor: "pointer",
           overflow: "hidden",
         }}
       >
         <Image
           className="object-fit-cover"
-          style={{ width: 180, borderRadius: 5}}
+          style={{ width: 180, height: 180, borderRadius: 5}}
           src={process.env.REACT_APP_API_URL + device.img}
         ></Image>
         <div
@@ -66,7 +66,7 @@ function DeviceItem({ device, onRemove }) {
           </div>
        
           <div className="d-flex align-items-end justify-content-end">
-            {user.isAuth && (
+            {user.user.role == 'ADMIN' && (
               <div >
                 <Button
                   style={{ marginRight: "10px" }}
@@ -100,9 +100,8 @@ function DeviceItem({ device, onRemove }) {
               onClick={(event) => {
                 event.stopPropagation();
                 basket.addDevice(device.id);
-
-                console.log(basket.devices);
-                console.log(basket.BScount);
+/*                 console.log(basket.devices);
+                console.log(basket.BScount); */
                 
               }}
             >
